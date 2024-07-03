@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+use Illuminate\Database\Eloquent\Model;
+
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
@@ -21,8 +23,11 @@ class User extends Authenticatable
         'email',
         'password',
         'ic_number',
-        'contact_no'
+        'contact_no',
+        'user_role'
     ];
+
+    protected $table = 'mccbs_users';
 
     /**
      * The attributes that should be hidden for serialization.
@@ -46,4 +51,13 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function role()
+    {
+        return $this->hasOne(mccbs_core_meta::class,'id','user_role');
+    }
+
+   
+
+
 }

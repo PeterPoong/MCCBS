@@ -6,7 +6,7 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
 import Sidebar from '@/Components/Sidebar/Sidebar';
 
-export default function Authenticated({ user, header, children }) {
+export default function Authenticated({ user, header, children}) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -17,9 +17,10 @@ export default function Authenticated({ user, header, children }) {
     return (
         <div className="min-h-screen bg-gray-100 flex">
             {/* Sidebar */}
-            <Sidebar isOpen={isSidebarOpen} />
+            <Sidebar auth={user} isOpen={isSidebarOpen} />
 
             {/* Main Content */}
+            {/* <div>{user.role.core_meta_name}</div> */}
             <div className="flex-1">
                 {/* Top Navigation */}
                 <nav className="bg-white border-b border-gray-100">

@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Link } from '@inertiajs/react';
 import SidebarDropdown from './SidebarDropDown';
 
-export default function Sidebar() {
+export default function Sidebar({ auth }) {
     const [isOpen, setIsOpen] = useState(true);
+    // const user = auth.user;
 
     return (
+        
         <div className={`bg-gray-800 text-white min-h-screen flex flex-col ${isOpen ? 'w-64' : 'w-20'}`}>
             {/* Sidebar Header */}
             <div className="p-4 flex items-center justify-between">
@@ -40,11 +42,17 @@ export default function Sidebar() {
                     </li>
 
                     {/* Profile Link */}
-                    <li>
-                        <Link href={route('userPage')} className="block py-2 px-4 rounded hover:bg-gray-700">
-                            User
-                        </Link>
-                    </li>
+
+                    {auth.user_role === 1 && (
+                        <li>
+                            <Link href={route('userPage')} className="block py-2 px-4 rounded hover:bg-gray-700">
+                                User
+                            </Link>
+                        </li>
+                    )}
+                    
+                    
+
                     <li>
                         <Link href="/department" className="block py-2 px-4 rounded hover:bg-gray-700">
                             Department

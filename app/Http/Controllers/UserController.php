@@ -18,8 +18,13 @@ class UserController extends Controller
         // return $users;
         // dd(Auth::user()->id);
         //******8 */
+
+        // $users = User::where('id', '!=', Auth::id())->get();
+        // $users=User::all();
+        $users = User::with('role')->where('id', '!=', Auth::id())->paginate(10);
         
-        $users = User::where('id', '!=', Auth::id())->get();
+
+        // dd($users);
         return Inertia::render('UserPage', [
             'users' => $users, // Adjusted variable name to 'users'
             'auth' => ['user' => auth()->user()], // Example of passing authenticated user info
