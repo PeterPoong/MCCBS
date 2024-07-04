@@ -54,7 +54,7 @@ export default function Sidebar({ auth }) {
                     
 
                     <li>
-                        <Link href="/department" className="block py-2 px-4 rounded hover:bg-gray-700">
+                        <Link href={route('departmentPage')} className="block py-2 px-4 rounded hover:bg-gray-700">
                             Department
                         </Link>
                     </li>

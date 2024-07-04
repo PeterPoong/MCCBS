@@ -7,5 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class mccbs_department extends Model
 {
+
+    protected $fillable = [
+        'department_name',
+    ];
+
     use HasFactory;
 }
