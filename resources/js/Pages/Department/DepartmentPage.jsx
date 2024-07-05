@@ -1,8 +1,13 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
+import DeletepopOut from '@/Components/DeletePopOut'
+import Pagination from '@/Components/Pagination';
+import '../../../css/pagination.css'
 
 
-export default function DepartmentPage({ auth, departments }) {
+
+export default function DepartmentPage({ auth, departments, links }) {
+    // const test = links ? Object.keys(links).length : 0;
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -57,9 +62,7 @@ export default function DepartmentPage({ auth, departments }) {
                                         >
                                             Edit
                                         </Link>
-                                        <button className="text-red-600 hover:text-red-900 ml-2">
-                                            Delete
-                                        </button>
+                                        <DeletepopOut className="max-w-xl" dataValue={department} disableRoute="department.disable" disableType="department"/>
                                     </td>
                                 </tr>
                             );
@@ -67,31 +70,11 @@ export default function DepartmentPage({ auth, departments }) {
                     </tbody>
                 </table>
             </div>
+            <Pagination links={links}/>
+            {/* <div>
+                {test}
+            </div> */}
 
-            {/* Pagination links */}
-            <div className="mt-4">
-                {departments.links && (
-                    <ul className="pagination">
-                        {/* Previous page link */}
-                        {departments.links.prev && (
-                            <li className="page-item">
-                                <Link href={departments.links.prev} className="page-link">
-                                    Previous
-                                </Link>
-                            </li>
-                        )}
-
-                        {/* Next page link */}
-                        {departments.links.next && (
-                            <li className="page-item">
-                                <Link href={departments.links.next} className="page-link">
-                                    Next
-                                </Link>
-                            </li>
-                        )}
-                    </ul>
-                )}
-            </div>
         </AuthenticatedLayout>
     );
 }

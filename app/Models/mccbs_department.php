@@ -10,6 +10,7 @@ class mccbs_department extends Model
 
     protected $fillable = [
         'department_name',
+        'department_status'
     ];
 
     use HasFactory;

@@ -2,6 +2,7 @@ import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useForm } from '@inertiajs/react';
 
+
 export default function EditDepartmentPage({ auth, department }) {
     const { data, setData, patch, processing, errors } = useForm({
         department_name: department.department_name, // Assuming this matches your backend field name

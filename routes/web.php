@@ -35,6 +35,9 @@ Route::prefix('department')->middleware(['auth', 'verified'])->group(function ()
     //update old department
     Route::get('/departments/{department}/edit',[DepartmentController::class,'edit'])->name('department.edit');//displat form
     Route::patch('/departments',[DepartmentController::class,'update'])->name('department.update');//update the department
+
+    Route::get('/departments/{department}/remove',[DepartmentController::class,'remove'])->name('department.remove');
+    Route::patch('/departments/disable',[DepartmentController::class,'disable'])->name('department.disable');
 });
 
 //testing postman 
