@@ -8,6 +8,7 @@ import '../../../css/pagination.css'
 
 export default function DepartmentPage({ auth, departments, links }) {
     // const test = links ? Object.keys(links).length : 0;
+    console.log(auth);
     return (
         <AuthenticatedLayout
             user={auth.user}

@@ -1,11 +1,27 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
+import Pagination from '@/Components/Pagination';
+import '../../../css/pagination.css'
+import DeletepopOut from '@/Components/DeletePopOut'
 
-export default function UserPage({ auth, users }) {
+
+export default function UserPage({ auth, users, links }) {
+
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">UserPage</h2>}
+            header={
+                <div className="flex justify-between items-center">
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">UserPage</h2>
+                    {/* <Link
+                        href={route('user.create')}
+                        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md text-sm shadow-md"
+                    >
+                        Add Department
+                    </Link> */}
+                </div>
+            }
+
         >
             <Head title="User Page" />
 
@@ -39,6 +55,7 @@ export default function UserPage({ auth, users }) {
                             const statusClass = user.status === 1 ? 'text-green-500' : 'text-red-500';
                             return (
                                 <tr key={user.id}>
+
                                     <td className="px-6 py-4 text-center whitespace-no-wrap text-sm leading-5 font-medium text-gray-900">
                                         {user.name}
                                     </td>
@@ -49,15 +66,17 @@ export default function UserPage({ auth, users }) {
                                         {user.role ? user.role.core_meta_name : 'N/A'}
                                     </td>
                                     <td className="px-6 py-4 text-center whitespace-no-wrap text-sm leading-5 text-gray-500">
-                                        {user.department ? user.department.core_meta_name : 'N/A'}
+                                        {user.user_department ? user.user_department.department_name : 'N/A'}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-center">
-                                        <button className="text-indigo-600 hover:text-indigo-900 mr-2">
+                                        <Link
+                                            href={route('user.edit', user.id)}
+                                            className="text-indigo-600 hover:text-indigo-900 mr-2"
+                                        >
                                             Edit
-                                        </button>
-                                        <button className="text-red-600 hover:text-red-900 ml-2">
-                                            Delete
-                                        </button>
+                                        </Link>
+                                        <DeletepopOut className="max-w-xl" dataValue={user} disableRoute="user.disable" disableType="user" />
+
                                     </td>
                                     <td className={`px-6 py-4 font-bold text-center whitespace-no-wrap text-sm leading-5 text-gray-500 ${statusClass}`}>
                                         {status}
@@ -68,31 +87,11 @@ export default function UserPage({ auth, users }) {
                     </tbody>
                 </table>
             </div>
-            
-            <div className="mt-4">
-                {users.links && (
-                    <ul className="pagination">
-                        {/* Previous page link */}
-                        {users.links.prev && (
-                            <li className="page-item">
-                                <Link href={users.links.prev} className="page-link">
-                                    Previous
-                                </Link>
-                            </li>
-                        )}
 
-                        {/* Next page link */}
-                        {users.links.next && (
-                            <li className="page-item">
-                                <Link href={users.links.next} className="page-link">
-                                    Next
-                                </Link>
-                            </li>
-                        )}
-                    </ul>
-                )}
-            </div>
-            
+            <Pagination links={links} />
+
+
+
         </AuthenticatedLayout>
     );
 }

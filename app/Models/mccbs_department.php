@@ -14,4 +14,8 @@ class mccbs_department extends Model
     ];
 
     use HasFactory;
+    public function userDepartment()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -17,6 +17,8 @@ class DepartmentController extends Controller
     public function index()
     {
         $departments = mccbs_department::where('department_status',1)->paginate(10);
+        // $departments = mccbs_department::paginate(10);
+
         // dd($departments);
         // dd($departments->links());
         // dd($departments->toArray()['links']);
@@ -53,7 +55,6 @@ class DepartmentController extends Controller
 
     public function edit(mccbs_department $department)
     {
-
         return Inertia::render('Department/EditDepartmentPage', [
             'auth' => ['user' => auth()->user()],
             'department' => $department
@@ -87,11 +88,11 @@ class DepartmentController extends Controller
 
     public function disable(Request $request)
     {
-        $departmentID=$request->department;
+        $departmentID=$request->id;
         $department=mccbs_department::find($departmentID);
         // dd($department);
         $department->update([
-            'department_status' => $request->department_status,
+            'department_status' => $request->status,
             // Update other fields as necessary
         ]);
         return redirect(route('departmentPage'));

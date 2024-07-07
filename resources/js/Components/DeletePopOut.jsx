@@ -13,8 +13,8 @@ export default function DeletePopOut({ className = '',dataValue, disableRoute,di
     // const passwordInput = useRef();
 
     const { data, setData, patch, processing, errors } = useForm({
-        department_status: 0, // Assuming this matches your backend field name
-        department:dataValue['id'],
+        status: 0, // Assuming this matches your backend field name
+        id:dataValue['id'],
     });
 
     const confirmUserDeletion = () => {
@@ -32,6 +32,18 @@ export default function DeletePopOut({ className = '',dataValue, disableRoute,di
         patch(route(disableRoute)); // Assuming 'departments.store' is your route name
     };
 
+    let disableName='';
+    switch(disableType)
+    {
+        case 'department':
+            disableName=dataValue.department_name
+            break;
+        case 'user':
+            disableName=dataValue.name
+            break;
+    }
+
+
     return (
         <section className={`space-y-6 ${className}`}>
             <button className="link-button" onClick={confirmUserDeletion}>Delete</button>
@@ -39,7 +51,7 @@ export default function DeletePopOut({ className = '',dataValue, disableRoute,di
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
                 <form onSubmit={disableUser} className="p-6">
                     <h2 className="text-lg font-medium text-gray-900">
-                        Are you sure you want to remove <b>"{dataValue.department_name}"</b>?
+                        Are you sure you want to remove <b>"{disableName}"</b>?
                     </h2>
 
                     {/* <p className="mt-1 text-sm text-gray-600">

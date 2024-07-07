@@ -24,7 +24,9 @@ class User extends Authenticatable
         'password',
         'ic_number',
         'contact_no',
-        'user_role'
+        'user_role',
+        'department',
+        'status'
     ];
 
     protected $table = 'mccbs_users';
@@ -55,6 +57,11 @@ class User extends Authenticatable
     public function role()
     {
         return $this->hasOne(mccbs_core_meta::class,'id','user_role');
+    }
+
+    public function user_department()
+    {
+        return $this->hasOne(mccbs_department::class,'id','department');
     }
 
    
