@@ -19,24 +19,30 @@ Route::get('/', function () {
     ]);
 });
 
+// Route::get('/', function () {
+//     return Inertia::render('');
+// });
+
+
 // Route::get('/dashboard', function () {
 
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard')->middleware('auth');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 
 Route::prefix('department')->middleware(['auth', 'verified'])->group(function () {
-    Route::get('/',[DepartmentController::class,'index'])->name('departmentPage');
+    Route::get('/', [DepartmentController::class, 'index'])->name('departmentPage');
     //create new department
-    Route::get('/addDepartments',[DepartmentController::class,'create'])->name('department.create');//display form
-    Route::post('/departments',[DepartmentController::class,'store'])->name('department.store');//store new data
+    Route::get('/addDepartments', [DepartmentController::class, 'create'])->name('department.create'); //display form
+    Route::post('/departments', [DepartmentController::class, 'store'])->name('department.store'); //store new data
 
     //update old department
-    Route::get('/departments/{department}/edit',[DepartmentController::class,'edit'])->name('department.edit');//displat form
-    Route::patch('/departments',[DepartmentController::class,'update'])->name('department.update');//update the department
+    Route::get('/departments/{department}/edit', [DepartmentController::class, 'edit'])->name('department.edit'); //displat form
+    Route::patch('/departments', [DepartmentController::class, 'update'])->name('department.update'); //update the department
 
-    Route::patch('/departments/disable',[DepartmentController::class,'disable'])->name('department.disable');
+    Route::get('/departments/{department}/remove', [DepartmentController::class, 'remove'])->name('department.remove');
+    Route::patch('/departments/disable', [DepartmentController::class, 'disable'])->name('department.disable');
 });
 
 //testing postman 
@@ -44,15 +50,10 @@ Route::prefix('department')->middleware(['auth', 'verified'])->group(function ()
 
 
 Route::prefix('user')->middleware(['auth', 'verified'])->group(function () {
-    Route::get('/userPage',[UserController::class,'index'])->name('userPage');
-
-   Route::get('/{user}/edit',[UserController::class,'edit'])->name('user.edit');
-   Route::patch('/user',[UserController::class,'update'])->name('user.update');
-
-
-
-
-    Route::patch('/user/disable',[UserController::class,'disable'])->name('user.disable');
+    Route::get('/userPage', [UserController::class, 'index'])->name('userPage');
+    Route::get('/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
+    Route::patch('/user', [UserController::class, 'update'])->name('user.update');
+    Route::patch('/user/disable', [UserController::class, 'disable'])->name('user.disable');
     // Route::get('/', function () {
     //     return Inertia::render('UserPage');
     // })->name('userPage');
@@ -65,4 +66,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

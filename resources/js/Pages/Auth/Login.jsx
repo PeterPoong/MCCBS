@@ -16,7 +16,7 @@ export default function Login({ status, canResetPassword }) {
         contactNumber: '',
     });
 
-    const [activeTab, setActiveTab] = useState('email_or_ic');
+    const [activeTab, setActiveTab] = useState('contact_number');
 
     useEffect(() => {
         return () => {
@@ -44,9 +44,9 @@ export default function Login({ status, canResetPassword }) {
     };
 
     const handleTabSwitch = (tab) => {
-    setActiveTab(tab);
-    resetFields();
-};
+        setActiveTab(tab);
+        resetFields();
+    };
 
 
     return (
@@ -61,14 +61,15 @@ export default function Login({ status, canResetPassword }) {
 
             <div className="tabs">
                 <button
-                    className={`tab ${activeTab === 'email_or_ic' ? 'active' : ''}`}
-                    onClick={() => handleTabSwitch('email_or_ic')}                >
-                    Email/IC
-                </button>
-                <button
                     className={`tab ${activeTab === 'contact_number' ? 'active' : ''}`}
                     onClick={() => handleTabSwitch('contact_number')}                >
                     Phone-Num
+                </button>
+                
+                <button
+                    className={`tab ${activeTab === 'email_or_ic' ? 'active' : ''}`}
+                    onClick={() => handleTabSwitch('email_or_ic')}                >
+                    Email/IC
                 </button>
             </div>
 
@@ -164,7 +165,7 @@ export default function Login({ status, canResetPassword }) {
                         className="mt-1 block w-full"
                         autoComplete="current-password"
                         onChange={(e) => setData('password', e.target.value)}
-                        
+
                     />
 
                     <InputError message={errors.password} className="mt-2" />

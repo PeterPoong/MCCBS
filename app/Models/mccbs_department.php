@@ -18,4 +18,9 @@ class mccbs_department extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function authority()
+    {
+        return $this->belongsToMany(mccbs_authority::class);
+    }
 }

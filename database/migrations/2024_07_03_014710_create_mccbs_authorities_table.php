@@ -17,6 +17,9 @@ return new class extends Migration
             $table->unsignedBigInteger('department')->nullable();
             $table->integer('authority_status')->default(1);
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('mccbs_users')->onDelete('set null');
+            $table->foreign('department')->references('id')->on('mccbs_departments')->onDelete('set null');
         });
     }
 

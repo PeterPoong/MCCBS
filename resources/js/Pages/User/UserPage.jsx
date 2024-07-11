@@ -6,6 +6,31 @@ import DeletepopOut from '@/Components/DeletePopOut'
 
 
 export default function UserPage({ auth, users, links }) {
+    const actionButton=(status,user)=>{
+        switch (status){
+            case 1:
+                return( <>
+                    <Link
+                        href={route('user.edit', user.id)}
+                        className="text-indigo-600 hover:text-indigo-900 mr-2"
+                    >
+                        Edit
+                    </Link>
+                    <DeletepopOut className="max-w-xl" dataValue={user} disableRoute="user.disable" disableType="user" />
+    
+                </>)
+        case 2:
+            return(<>
+                  {
+                  <Link
+                        href={route('user.edit', user.id)}
+                        className="text-yellow-600 hover:text-yellow-900 mr-2"
+                    >
+                        Approve
+                    </Link>}
+                </>)
+        }
+    }
 
     return (
         <AuthenticatedLayout
@@ -51,8 +76,25 @@ export default function UserPage({ auth, users, links }) {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         {users.data.map((user) => {
-                            const status = user.status === 1 ? 'Active' : 'Inactive';
-                            const statusClass = user.status === 1 ? 'text-green-500' : 'text-red-500';
+                            let status;
+                            let statusClass;
+                            switch (user.status)
+                            {
+                                case 1:
+                                    status='Active',
+                                    statusClass='text-green-500'
+                                    break
+                                case 2:
+                                    status='Pending',
+                                    statusClass='text-yellow-500'
+                                    break
+                                case 0:
+                                    status='Inactive',
+                                    statusClass='text-red-500'
+                                    break
+                            }
+                            // const status = user.status === 1 ? 'Active' : 'Pending';
+                            // const statusClass = user.status === 1 ? 'text-green-500' : 'text-red-500';
                             return (
                                 <tr key={user.id}>
 
@@ -69,14 +111,7 @@ export default function UserPage({ auth, users, links }) {
                                         {user.user_department ? user.user_department.department_name : 'N/A'}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex justify-center">
-                                        <Link
-                                            href={route('user.edit', user.id)}
-                                            className="text-indigo-600 hover:text-indigo-900 mr-2"
-                                        >
-                                            Edit
-                                        </Link>
-                                        <DeletepopOut className="max-w-xl" dataValue={user} disableRoute="user.disable" disableType="user" />
-
+                                        {actionButton(user.status,user)}
                                     </td>
                                     <td className={`px-6 py-4 font-bold text-center whitespace-no-wrap text-sm leading-5 text-gray-500 ${statusClass}`}>
                                         {status}

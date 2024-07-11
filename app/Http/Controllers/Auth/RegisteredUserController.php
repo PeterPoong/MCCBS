@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\mccbs_country;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -13,6 +14,7 @@ use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Validator;
+use App\Models\mccbs_department;
 
 class RegisteredUserController extends Controller
 {
@@ -21,8 +23,29 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Auth/Register');
+
+
+        $country = mccbs_country::get();
+        // dd($country);
+        return Inertia::render('Auth/RegisterContact', [
+            'country' => $country
+        ]);
     }
+
+    public function checkContact(Request $request)
+    {
+        $contactNum = $request->countryCode . $request->contactNumber;
+        $checkUser = User::where('contact_no', $contactNum)->exists();
+        if ($checkUser) {
+            return Inertia::render('Auth/Login');
+        } else {
+            return Inertia::render('Auth/Register');
+        }
+    }
+    // const submit = (e) => {
+    //     e.preventDefault();
+    //     post(route('registerContact'));
+    // };
 
     /**
      * Handle an incoming registration request.
@@ -34,18 +57,18 @@ class RegisteredUserController extends Controller
         // dd($request);
         $request->validate([
             'name' => 'required|string|max:255',
-            'icNumber'=>'required|string|max:255|unique:'.User::class.',ic_number',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'icNumber' => 'required|string|max:255|unique:' . User::class . ',ic_number',
+            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'contactNumber'=>'required',
-            'countryCode'=>'required'
-        ],[
+            'contactNumber' => 'required',
+            'countryCode' => 'required'
+        ], [
             'icNumber.unique' => 'IC Number has already been taken.',
             'email.unique' => 'The email address has already been taken.',
             'contactNumber.unique' => 'The contact number has already been taken.',
         ]);
 
-        $contactNumber=$request->countryCode.''.$request->contactNumber;
+        $contactNumber = $request->countryCode . '' . $request->contactNumber;
 
         // Custom validation for combined value
         $validator = Validator::make(['contactNumber' => $contactNumber], [
@@ -64,7 +87,7 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'ic_number' => $request->icNumber,
             'password' => Hash::make($request->password),
-            'contact_no'=>$contactNumber,
+            'contact_no' => $contactNumber,
             'user_role' => 3,
         ]);
 

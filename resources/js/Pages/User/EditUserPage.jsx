@@ -1,17 +1,24 @@
 import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useForm } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
 
-export default function EditUserPage({ auth, user, roles ,departments}) {
-    console.log('User:', user.id);
+
+export default function EditUserPage({ auth, user, roles, departments ,availableDepart,departmentsAccess}) {
+    // const [selectedDepartments, setSelectedDepartments] = useState([]);
+    const test = [];
+    const [availableDepartments, setAvailableDepartments] = useState(availableDepart);
+    const [selectedDepartments, setSelectedDepartments] = useState(departmentsAccess);
+    const [formatError, setFormatError] = useState('');
     const { data, setData, patch, processing, errors } = useForm({
         name: user.name, // Assuming this matches your backend field name
         email: user.email,
         ic: user.ic_number,
         oldUserID: user.id,
-        role:user.user_role,
-        department:user.department
+        role: user.user_role,
+        department: user.department,
+        authority: []
     });
 
     // const handleChange = (e) => {
@@ -19,6 +26,35 @@ export default function EditUserPage({ auth, user, roles ,departments}) {
 
     //     setData('name', value); // Set the data dynamically based on input name
     // };
+    const integerPattern = /^\d{0,12}$/;
+    const handleICNumberInputChange = (e) => {
+        const { value } = e.target;
+        if (integerPattern.test(value)) {
+            setData('ic', value);
+        } else {
+            setFormatError('IC Number must contain only 12 digits (0-9).');
+
+        }
+    };
+
+
+
+
+
+    const handleAddDepartment = (department) => {
+        setAvailableDepartments(availableDepartments.filter(dep => dep.id !== department.id));
+        setSelectedDepartments([...selectedDepartments, department]);
+    };
+
+    const handleRemoveDepartment = (department) => {
+        setSelectedDepartments(selectedDepartments.filter(dep => dep.id !== department.id));
+        setAvailableDepartments([...availableDepartments, department]);
+    };
+
+    useEffect(() => {
+        setData('authority', selectedDepartments);
+    }, [selectedDepartments, setData]);
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -74,16 +110,18 @@ export default function EditUserPage({ auth, user, roles ,departments}) {
                             IC_Number
                         </label>
                         <input
-                            type="number"
                             id="ic"
                             name="ic"
                             value={data.ic}
-                            onChange={(e) => setData('ic', e.target.value)}
-                            // onChange={handleChange}
+                            onChange={handleICNumberInputChange}
+                            // onChange={(e) => setData('ic', e.target.value)}
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         />
                         {/* Display validation error */}
-                        {errors.ix && (
+                        {formatError && (
+                            <div className="text-red-500 text-sm mt-1">{formatError}</div>
+                        )}
+                        {errors.ic && (
                             <div className="text-red-500 text-sm mt-1">{errors.ic}</div>
                         )}
                     </div>
@@ -114,7 +152,6 @@ export default function EditUserPage({ auth, user, roles ,departments}) {
                     </div>
 
                     <div className="mt-4 flex items-start">
-                        {/* Country Code Select */}
                         <div className="flex-shrink-0">
                             <label htmlFor="department" className="block text-sm font-medium text-gray-700">Department</label>
                             <div className="mt-1">
@@ -138,15 +175,66 @@ export default function EditUserPage({ auth, user, roles ,departments}) {
 
                     </div>
 
+                    <div className="mt-6 flex flex-col items-start" style={{ width: '60%' }}>
+                        <div className="w-full">
+                            <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-4">Authority</label>
+
+                            <div className="border border-gray-300 rounded p-4 relative">
+                                <div className="absolute -top-4 left-4 bg-white px-2">
+                                    <h2 className="block text-sm font-medium text-gray-700">Available Departments</h2>
+                                </div>
+                                <ul className="space-y-2 mt-1">
+                                    {availableDepartments.map(department => (
+                                        <li key={department.id} className="flex items-center">
+                                            <span className="block text-sm font-medium text-gray-700 mr-3">{department.department_name}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleAddDepartment(department)}
+                                                className="bg-green-500 hover:bg-green-600 text-white py-1 px-2 rounded-md text-sm shadow-md"
+                                            >
+                                                Add
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-6 flex flex-col items-start" style={{ width: '60%' }}>
+                        <div className="w-full">
+                            <div className="border border-gray-300 rounded p-4 relative">
+                                <div className="absolute -top-4 left-4 bg-white px-2">
+                                    <h2 className="block text-sm font-medium text-gray-700">Selected Departments</h2>
+                                </div>
+                                <ul className="space-y-2 mt-1">
+                                    {selectedDepartments.map(department => (
+                                        <li key={department.id} className="flex items-center">
+                                            <span className="block text-sm font-medium text-gray-700 mr-3">{department.department_name}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveDepartment(department)}
+                                                className="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded-md text-sm shadow-md"
+                                            >
+                                                Remove
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
 
 
 
-                    {/* Add more fields as needed */}
-                    {/* <div className="flex items-center justify-center mt-4">
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
-                </div> */}
+
+
+
+
+
+
+
+
 
                     <div className="mt-4">
                         <button

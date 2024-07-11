@@ -64,6 +64,11 @@ class User extends Authenticatable
         return $this->hasOne(mccbs_department::class,'id','department');
     }
 
+    public function authority()
+    {
+        return $this->belongsToMany(mccbs_authority::class);
+    }
+
    
 
 
