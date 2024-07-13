@@ -27,11 +27,17 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // 'email' => ['required', 'string', 'email'],
+            // 'login' => 'email', 
             // 'login'=>['string'],
             'password' => ['required', 'string'],
         ];
     }
+
+    // public function messages():array{
+    //     return [
+    //         'login.email'=>'The email field must be a valid email'
+    //     ];
+    // }
 
     /**
      * Attempt to authenticate the request's credentials.
@@ -42,27 +48,33 @@ class LoginRequest extends FormRequest
     {
     //   dd($this->all());
         $this->ensureIsNotRateLimited();
-        $key='login';
+       
         if($this->contactNumber==null)
         {
-            $loginField = $this->isEmail($this->login) ? 'email' : 'ic_number';
+            $key='login';
+            $loginField='email';
             $loginValue=$this->login;
+            if (! Auth::attempt([$loginField => $loginValue, 'password' => $this->password], $this->boolean('remember'))) {
+                RateLimiter::hit($this->throttleKey());
+        
+                throw ValidationException::withMessages([
+                    $key=> trans('auth.failed'),
+                ]);
+            }
         }else
         {
-            $loginField='contact_no';
-            $loginValue=$this->countryCode.''.$this->contactNumber;
             $key='contactNumber';
+            if (! Auth::attempt(['country_code' => $this->countryCode, 'contact_no'=>$this->contactNumber, 'password' => $this->password], $this->boolean('remember'))) {
+                RateLimiter::hit($this->throttleKey());
+        
+                throw ValidationException::withMessages([
+                    $key=> trans('auth.failed'),
+                ]);
+            }
         }  
-        // $loginField = $this->filled('contactNumber') ? 'contactNumber' : 'login';
 
-        if (! Auth::attempt([$loginField => $loginValue, 'password' => $this->password], $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
-    
-            throw ValidationException::withMessages([
-                $key=> trans('auth.failed'),
-            ]);
-        }
 
+      
         // if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
         //     RateLimiter::hit($this->throttleKey());
 
@@ -72,6 +84,8 @@ class LoginRequest extends FormRequest
         // }
         RateLimiter::clear($this->throttleKey());
     }
+
+  
 
     /**
      * Ensure the login request is not rate limited.

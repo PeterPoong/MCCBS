@@ -7,12 +7,17 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
 
-export default function Login({ status, canResetPassword }) {
+export default function Login({ status, canResetPassword, country }) {
+    const [contactNumberError, setContactNumberError] = useState('');
+    const [countries, setCountries] = useState([]);
+
+
+
     const { data, setData, post, processing, errors, reset } = useForm({
         login: '',
         password: '',
         remember: false,
-        countryCode: '+1', // Default country code
+        countryCode: '+60', // Default country code
         contactNumber: '',
     });
 
@@ -24,23 +29,39 @@ export default function Login({ status, canResetPassword }) {
         };
     }, []);
 
+    useEffect(() => {
+        setCountries(country);
+    }, [country]);
+
     const resetFields = () => {
         setData({
             login: '',
             password: '',
             remember: false,
-            countryCode: '+1',
+            countryCode: '+60',
             contactNumber: '',
         });
     };
 
     const submit = (e) => {
         e.preventDefault();
+        console.log('Submitting form:', data);
         post(route('login'));
     };
 
+    // const handleContactNumberInputChange = (e) => {
+    //     setData('contactNumber', e.target.value);
+    // };
+    const integerPatternContact = /^\d{0,15}$/;
+
     const handleContactNumberInputChange = (e) => {
-        setData('contactNumber', e.target.value);
+        const { value } = e.target;
+        if (value === '' || integerPatternContact.test(value)) {
+            setContactNumberError('');
+            setData('contactNumber', value);
+        } else {
+            setContactNumberError('Contact Number must contain only 15 digits (0-9).');
+        }
     };
 
     const handleTabSwitch = (tab) => {
@@ -65,46 +86,35 @@ export default function Login({ status, canResetPassword }) {
                     onClick={() => handleTabSwitch('contact_number')}                >
                     Phone-Num
                 </button>
-                
+
                 <button
-                    className={`tab ${activeTab === 'email_or_ic' ? 'active' : ''}`}
-                    onClick={() => handleTabSwitch('email_or_ic')}                >
-                    Email/IC
+                    className={`tab ${activeTab === 'email' ? 'active' : ''}`}
+                    onClick={() => handleTabSwitch('email')}                >
+                    Email
                 </button>
             </div>
 
+
+
             <form onSubmit={submit}>
-                {activeTab === 'email_or_ic' && (
+                {activeTab === 'email' && (
                     <div>
                         <div>
-                            <InputLabel htmlFor="login" value="Email / IC Number" />
+                            <InputLabel htmlFor="login" value="Email" />
                             <TextInput
                                 id="login"
                                 name="login"
+                                type='email'
                                 value={data.login}
-                                placeholder="Email or IC Number"
+                                placeholder="Email"
                                 className="mt-1 block w-full"
                                 autoComplete="login"
                                 isFocused={true}
                                 onChange={(e) => setData('login', e.target.value)}
                                 required
                             />
-                            <InputError message={errors.login} className="mt-2" />
+                            {errors && errors.login && <InputError message={errors.login} className="mt-2" />}
                         </div>
-
-                        {/* <div className="mt-4">
-                            <InputLabel htmlFor="password" value="Password" />
-                            <TextInput
-                                id="password"
-                                type="password"
-                                name="password"
-                                value={data.password}
-                                className="mt-1 block w-full"
-                                autoComplete="current-password"
-                                onChange={(e) => setData('password', e.target.value)}
-                            />
-                            <InputError message={errors.password} className="mt-2" />
-                        </div> */}
                     </div>
                 )}
 
@@ -122,11 +132,11 @@ export default function Login({ status, canResetPassword }) {
                                     className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                     required
                                 >
-                                    <option value="+1">+1 (USA)</option>
-                                    <option value="+44">+44 (UK)</option>
-                                    <option value="+61">+61 (Australia)</option>
-                                    <option value="+60">+60 (Malaysia)</option>
-                                    {/* Add more options as needed */}
+                                    {countries && countries.length > 0 && countries.map((country) => (
+                                        <option key={country.country_code} value={country.country_code}>
+                                            {country.country_code}({country.country_name})
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
@@ -146,7 +156,11 @@ export default function Login({ status, canResetPassword }) {
                                     className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                 />
                             </div>
-                            {errors.contactNumber && (
+                            {contactNumberError && (
+                                <InputError message={contactNumberError} className="mt-2" />
+                            )}
+
+                            {errors.contactNumber && !contactNumberError && (
                                 <InputError message={errors.contactNumber} className="mt-2" />
                             )}
                         </div>

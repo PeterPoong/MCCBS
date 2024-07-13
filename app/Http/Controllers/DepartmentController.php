@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\mccbs_authority;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\mccbs_department;
@@ -96,5 +97,28 @@ class DepartmentController extends Controller
             // Update other fields as necessary
         ]);
         return redirect(route('departmentPage'));
+    }
+
+    public function departmentList(Request $request)
+    {
+        $user=auth()->user();
+
+        if($user->user_role===1)
+        {
+            $departmentList=mccbs_department::get();
+        }else
+        {
+            $auth=mccbs_authority::where('user_id',$user->id)->where('authority_status',1)->get();
+            foreach($auth as $depart)
+            {
+                $departmentArray[]=$depart->AuthrityDepartment->toArray();
+                $departmentList=array_merge(...$departmentArray);
+                
+            }
+        }
+       
+        return response()->json($departmentList);
+
+
     }
 }

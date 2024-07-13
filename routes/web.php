@@ -31,6 +31,8 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 
+Route::get('/departmentList',[DepartmentController::class, 'departmentList']);
+
 Route::prefix('department')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DepartmentController::class, 'index'])->name('departmentPage');
     //create new department

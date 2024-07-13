@@ -1,13 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from '@inertiajs/react';
 import SidebarDropdown from './SidebarDropDown';
+import axios from 'axios';
+
 
 export default function Sidebar({ auth }) {
     const [isOpen, setIsOpen] = useState(true);
-    // const user = auth.user;
+    const [departmentList, setDepartmentList] = useState([]);
+
+    const getDepartment = async () => {
+        try {
+            const response = await axios.get('http://127.0.0.1:8001/departmentList');
+            return response.data; // Return the actual data from the response
+        } catch (error) {
+            console.error('Error fetching department list:', error);
+            return []; // Return an empty array or handle error as needed
+        }
+    };
+
+    const fetchData = async () => {
+        const data = await getDepartment();
+        console.log(data);
+        setDepartmentList(data); // Update state with fetched data
+    };
+
+
+    useEffect(() => {
+        fetchData(); // Call fetchData() inside useEffect
+    }, []);
+
+
+
 
     return (
-        
         <div className={`bg-gray-800 text-white min-h-screen flex flex-col ${isOpen ? 'w-64' : 'w-20'}`}>
             {/* Sidebar Header */}
             <div className="p-4 flex items-center justify-between">
@@ -44,20 +69,35 @@ export default function Sidebar({ auth }) {
                     {/* Profile Link */}
 
                     {auth.user_role === 1 && (
-                        <li>
+                        <div>
+                            <li>
+                                <Link href={route('userPage')} className="block py-2 px-4 rounded hover:bg-gray-700">
+                                    User
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={route('departmentPage')} className="block py-2 px-4 rounded hover:bg-gray-700">
+                                    Department
+                                </Link>
+                            </li>
+                        </div>
+                    )}
+
+                    {departmentList.map((department) => (
+                        <li key={department.id}>
                             <Link href={route('userPage')} className="block py-2 px-4 rounded hover:bg-gray-700">
-                                User
+                                {department.department_name}
                             </Link>
                         </li>
-                    )}
+                    ))}
                     
-                    
+                   
 
-                    <li>
-                        <Link href={route('departmentPage')} className="block py-2 px-4 rounded hover:bg-gray-700">
-                            Department
-                        </Link>
-                    </li>
+
+
+
+
+
 
                     {/* Settings Dropdown */}
                     <li>

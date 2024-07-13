@@ -7,9 +7,9 @@ import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 
-export default function Register() {
+export default function Register({countryCode,contactNum}) {
     const [formatError, setFormatError] = useState('');
-    const [contactNumberError, setContactNumberError] = useState('');
+    // const [contactNumberError, setContactNumberError] = useState('');
     // const [countryCode, setCountryCode] = useState('+1');
     // const [lastContactNumber, setlastContactNumber] = useState();
 
@@ -17,9 +17,9 @@ export default function Register() {
         name: '',
         email: '',
         icNumber: '',
-        countryCode: '+1',
+        countryCode: countryCode,
         password: '',
-        contactNumber: '',
+        contactNumber: contactNum,
         password_confirmation: '',
     });
 
@@ -47,16 +47,16 @@ export default function Register() {
         }
     };
 
-    const handleContactNumberInputChange = (e) => {
-        const { value } = e.target;
-        // Validate input against regex pattern
-        if (value === '' || integerPatternContact.test(value)) {
-            setContactNumberError('');
-            setData('contactNumber', value);
-        } else {
-            setContactNumberError('Contact Number must contain only 15 digits (0-9).');
-        }
-    };
+    // const handleContactNumberInputChange = (e) => {
+    //     const { value } = e.target;
+    //     // Validate input against regex pattern
+    //     if (value === '' || integerPatternContact.test(value)) {
+    //         setContactNumberError('');
+    //         setData('contactNumber', value);
+    //     } else {
+    //         setContactNumberError('Contact Number must contain only 15 digits (0-9).');
+    //     }
+    // };
 
     // const handleCountryCodeChange = (e) => {
     //     setCountryCode(e.target.value); // Update countryCode state with selected value
@@ -131,55 +131,6 @@ export default function Register() {
                     {errors.icNumber && !formatError && (
                         <InputError message={errors.icNumber} className="mt-2" />
                     )}
-                </div>
-
-                <div className="mt-4 flex items-start">
-                    {/* Country Code Select */}
-                    <div className="flex-shrink-0">
-                        <label htmlFor="countryCode" className="block text-sm font-medium text-gray-700">Country Code</label>
-                        <div className="mt-1">
-                            <select
-                                id="countryCode"
-                                name="countryCode"
-                                value={data.countryCode}
-                                onChange={(e) => setData('countryCode', e.target.value)}
-                                // onChange={(e) => setData('countryCode', 1)}
-                                className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                required
-                            >
-                                <option value="+1">+1 (USA)</option>
-                                <option value="+44">+44 (UK)</option>
-                                <option value="+61">+61 (Australia)</option>
-                                <option value="+60">+60 (Malaysia)</option>
-
-                                {/* Add more options as needed */}
-                            </select>
-                        </div>
-                    </div>
-
-                    {/* Contact Number Input */}
-                    <div className="ml-4 flex-1">
-                        <label htmlFor="contactNumber" className="block text-sm font-medium text-gray-700">Contact Number</label>
-                        <div className="mt-1">
-                            <input
-                                id="contactNumber"
-                                name="contactNumber"
-                                type="tel"
-                                value={data.contactNumber}
-                                onChange={handleContactNumberInputChange}
-                                autoComplete="tel"
-                                required
-                                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                            />
-                        </div>
-                        {contactNumberError && (
-                            <InputError message={contactNumberError} className="mt-2" />
-                        )}
-
-                        {errors.contactNumber && !contactNumberError && (
-                            <InputError message={errors.contactNumber} className="mt-2" />
-                        )}
-                    </div>
                 </div>
 
 

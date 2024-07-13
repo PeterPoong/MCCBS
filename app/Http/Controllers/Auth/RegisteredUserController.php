@@ -23,8 +23,6 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-
-
         $country = mccbs_country::get();
         // dd($country);
         return Inertia::render('Auth/RegisterContact', [
@@ -35,17 +33,30 @@ class RegisteredUserController extends Controller
     public function checkContact(Request $request)
     {
         $contactNum = $request->countryCode . $request->contactNumber;
-        $checkUser = User::where('contact_no', $contactNum)->exists();
+        $checkUser = User::where('country_code', $request->countryCode)
+                         ->where('contact_no',$request->contactNumber)
+                         ->exists();
         if ($checkUser) {
-            return Inertia::render('Auth/Login');
+            return redirect(route('login', absolute: false));
         } else {
-            return Inertia::render('Auth/Register');
+            // return redirect(route('registerPage'));
+            // Redirect with query parameters
+            return redirect()->route('registerPage')
+                            ->with('countryCode',$request->countryCode)
+                            ->with('contactNumber',$request->contactNumber);
         }
     }
-    // const submit = (e) => {
-    //     e.preventDefault();
-    //     post(route('registerContact'));
-    // };
+
+    public function registerPage(Request $request)
+    {
+        $countryCode = session('countryCode');
+        $contactNum= session('contactNumber');
+        return Inertia::render('Auth/Register', [
+            'countryCode' => $countryCode,
+            'contactNum'=>$contactNum
+        ]);
+    }
+
 
     /**
      * Handle an incoming registration request.
@@ -57,7 +68,7 @@ class RegisteredUserController extends Controller
         // dd($request);
         $request->validate([
             'name' => 'required|string|max:255',
-            'icNumber' => 'required|string|max:255|unique:' . User::class . ',ic_number',
+            'icNumber' => 'required|string|max:255|unique:' . User::class . 'ic_number',
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'contactNumber' => 'required',
@@ -67,6 +78,8 @@ class RegisteredUserController extends Controller
             'email.unique' => 'The email address has already been taken.',
             'contactNumber.unique' => 'The contact number has already been taken.',
         ]);
+
+        
 
         $contactNumber = $request->countryCode . '' . $request->contactNumber;
 
@@ -87,7 +100,8 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'ic_number' => $request->icNumber,
             'password' => Hash::make($request->password),
-            'contact_no' => $contactNumber,
+            'country_code'=>$request->countryCode,
+            'contact_no' =>$request->contactNumber,
             'user_role' => 3,
         ]);
 

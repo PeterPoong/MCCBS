@@ -2,15 +2,21 @@ import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { useForm } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import InputError from '@/Components/InputError';
 
 
 
-export default function EditUserPage({ auth, user, roles, departments ,availableDepart,departmentsAccess}) {
+
+export default function EditUserPage({ auth, user, roles, departments, availableDepart, departmentsAccess, country }) {
     // const [selectedDepartments, setSelectedDepartments] = useState([]);
-    const test = [];
+
     const [availableDepartments, setAvailableDepartments] = useState(availableDepart);
     const [selectedDepartments, setSelectedDepartments] = useState(departmentsAccess);
     const [formatError, setFormatError] = useState('');
+    const [contactNumberError, setContactNumberError] = useState('');
+    const [countries, setCountries] = useState([]);
+
+
     const { data, setData, patch, processing, errors } = useForm({
         name: user.name, // Assuming this matches your backend field name
         email: user.email,
@@ -18,14 +24,12 @@ export default function EditUserPage({ auth, user, roles, departments ,available
         oldUserID: user.id,
         role: user.user_role,
         department: user.department,
-        authority: []
+        authority: [],
+        countryCode: user.country_code, // Default country code
+        contactNumber: user.contact_no,
     });
 
-    // const handleChange = (e) => {
-    //     const { name, value } = e.target;
 
-    //     setData('name', value); // Set the data dynamically based on input name
-    // };
     const integerPattern = /^\d{0,12}$/;
     const handleICNumberInputChange = (e) => {
         const { value } = e.target;
@@ -51,9 +55,28 @@ export default function EditUserPage({ auth, user, roles, departments ,available
         setAvailableDepartments([...availableDepartments, department]);
     };
 
+    const integerPatternContact = /^\d{0,15}$/;
+
+    const handleContactNumberInputChange = (e) => {
+        const { value } = e.target;
+        if (value === '' || integerPatternContact.test(value)) {
+            setContactNumberError('');
+            setData('contactNumber', value);
+        } else {
+            setContactNumberError('Contact Number must contain only 15 digits (0-9).');
+        }
+    };
+
     useEffect(() => {
         setData('authority', selectedDepartments);
-    }, [selectedDepartments, setData]);
+    }, [selectedDepartments]);
+
+
+    useEffect(() => {
+        setCountries(country);
+    }, [country]);
+
+
 
 
     const handleSubmit = (e) => {
@@ -124,6 +147,57 @@ export default function EditUserPage({ auth, user, roles, departments ,available
                         {errors.ic && (
                             <div className="text-red-500 text-sm mt-1">{errors.ic}</div>
                         )}
+                    </div>
+
+                    <div className="mt-4 flex items-start">
+                        {/* Country Code Select */}
+                        <div className="flex-shrink-0">
+                            <label htmlFor="countryCode" className="block text-sm font-medium text-gray-700">Country Code</label>
+                            <div className="mt-1">
+                                <select
+                                    id="countryCode"
+                                    name="countryCode"
+                                    value={data.countryCode}
+                                    onChange={(e) => setData('countryCode', e.target.value)}
+                                    className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    required
+                                >
+                                    {countries && countries.length > 0 && countries.map((country) => (
+                                        <option key={country.country_code} value={country.country_code}>
+                                            {country.country_code}({country.country_name})
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Contact Number Input */}
+                        <div className="ml-4 flex-1">
+                            <label htmlFor="contactNumber" className="block text-sm font-medium text-gray-700">Contact Number</label>
+                            <div className="mt-1">
+                                <input
+                                    id="contactNumber"
+                                    name="contactNumber"
+                                    type="tel"
+                                    value={data.contactNumber}
+                                    onChange={handleContactNumberInputChange}
+                                    autoComplete="tel"
+                                    
+                                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                />
+                            </div>
+                            {contactNumberError && (
+                                <InputError message={contactNumberError} className="mt-2" />
+                            )}
+
+                            {/* {errors.contactNumber && (
+                                <div className="text-red-500 text-sm mt-1">{errors.contactNumber}</div>
+                            )} */}
+
+                            {errors.contactNumber && !contactNumberError && (
+                                <InputError message={errors.contactNumber} className="mt-2" />
+                            )}
+                        </div>
                     </div>
 
                     <div className="mt-4 flex items-start">
@@ -224,6 +298,8 @@ export default function EditUserPage({ auth, user, roles, departments ,available
                             </div>
                         </div>
                     </div>
+
+
 
 
 

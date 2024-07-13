@@ -20,7 +20,6 @@ export default function RegisterContact({ country }) {
     }, [country]);
 
     const integerPatternContact = /^\d{0,15}$/;
-
     const handleContactNumberInputChange = (e) => {
         const { value } = e.target;
         if (value === '' || integerPatternContact.test(value)) {
@@ -31,44 +30,34 @@ export default function RegisterContact({ country }) {
         }
     };
 
-    // const submit = (e) => {
-    //     e.preventDefault();
-    //     post(route('registerContact'));
-    // };
-
-    const submit = async (e) => {
+    const submit = (e) => {
         e.preventDefault();
-        try {
-            const response = await post(route('registerContact'));
-            const responseData = response.data; // Assuming response contains JSON data
-
-            if (responseData === 'login') {
-                setContactNumberError('Contact already exists. Please log in.');
-            } else if (responseData === 'register') {
-                // Optionally reset error state if needed
-                setContactNumberError('');
-                // Handle registration logic if needed
-            }
-        } catch (error) {
-            if (error.response && error.response.data && error.response.data.error) {
-                setContactNumberError(error.response.data.error);
-            } else {
-                console.error('Failed to check contact:', error);
-            }
-        }
+        post(route('registerContact'));
     };
 
     // const submit = async (e) => {
     //     e.preventDefault();
-    //     const response = await post(route('registerContact'), {
-    //         preserveScroll: true,
-    //         onSuccess: (response) => {
-    //             if (response === 'login') {
-    //                 setContactNumberError('Contact Number must contain only 15 digits (0-9).');
-    //             }
+    //     try {
+    //         const response = await post(route('registerContact'));
+    //         const responseData = response.data; // Assuming response contains JSON data
+
+    //         if (responseData === 'login') {
+    //             setContactNumberError('Contact already exists. Please log in.');
+    //         } else if (responseData === 'register') {
+    //             // Optionally reset error state if needed
+    //             setContactNumberError('');
+    //             // Handle registration logic if needed
     //         }
-    //     });
+    //     } catch (error) {
+    //         if (error.response && error.response.data && error.response.data.error) {
+    //             setContactNumberError(error.response.data.error);
+    //         } else {
+    //             console.error('Failed to check contact:', error);
+    //         }
+    //     }
     // };
+
+   
 
 
     return (
